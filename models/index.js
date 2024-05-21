@@ -4,14 +4,14 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 const sequelize = new Sequelize(
   process.env.DB_MYSQL,
-  process.env.DB_POSTGRES_USER,
-  // process.env.DB_USER,
-  process.env.DB_POSTGRES_PASSWORD,
-  // process.env.DB_PASSWORD,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  // process.env.DB_POSTGRES_USER,
+  // process.env.DB_POSTGRES_PASSWORD,
   {
     host: process.env.DB_HOST,
-    dialect: process.env.DB_POSTGRES_DIALECT,
-    // dialect: process.env.DB_DIALECT,
+    dialect: process.env.DB_DIALECT,
+    // dialect: process.env.DB_POSTGRES_DIALECT,
     // dialectOptions: {
     //   useUTC: false, // for reading from database
     // },

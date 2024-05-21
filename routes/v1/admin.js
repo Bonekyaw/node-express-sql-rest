@@ -1,7 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
-const adminController = require('../controllers/adminController');
+const adminController = require('../../controllers/adminController');
 
 // GET localhost:8080/admins - get all admins
 router.get('/admins', adminController.index);

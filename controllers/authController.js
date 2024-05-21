@@ -16,23 +16,23 @@ const {
   checkPhoneIfNotExist,
   checkOtpErrorIfSameDate,
   checkOtpPhone,
-} = require("./../util/auth");
+} = require("./../utils/auth");
 
 exports.register = asyncHandler(async (req, res, next) => {
   const phone = req.body.phone;
   const admin = await Admin.findOne({
-    where: { phone: phone }
+    where: { phone: phone }   // { phone }
   });
   checkPhoneExist(admin);
 
   // OTP processing eg. Sending OTP request to Operator
   const otpCheck = await Otp.findOne({   
-    where: { phone: phone }
+    where: { phone: phone }  // { phone }
   });
   const token = rand() + rand();
   if (!otpCheck) {
     const otp = {
-      phone: phone,
+      phone: phone,   // phone
       otp: "123456", // fake OTP
       rememberToken: token,
       count: 1,
@@ -68,8 +68,8 @@ exports.register = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     message: `We are sending OTP to 09${phone}.`,
-    phone: phone,
-    token: token,
+    phone,
+    token,
   });
 });
 
@@ -98,9 +98,7 @@ exports.verifyOTP = [
       err.status = 400;
       return next(err);
     }
-    const token = req.body.token;
-    const phone = req.body.phone;
-    const otp = req.body.otp;
+    const { token, phone, otp } = req.body;
 
     const admin = await Admin.findOne({
       where: { phone: phone }
@@ -194,9 +192,8 @@ exports.confirmPassword = [
       err.status = 400;
       return next(err);
     }
-    const token = req.body.token;
-    const phone = req.body.phone;
-    const password = req.body.password;
+    const { token, phone, password } = req.body;
+
 
     const admin = await Admin.findOne({
       where: { phone: phone }
@@ -274,11 +271,10 @@ exports.login = [
       return next(err);
     }
 
-    const phone = req.body.phone;
-    const password = req.body.password;
+    const { phone, password } = req.body;
 
     const admin = await Admin.findOne({
-      where: { phone: phone }
+      where: { phone }      // { phone: phone}
     });
     checkPhoneIfNotExist(admin);
 
