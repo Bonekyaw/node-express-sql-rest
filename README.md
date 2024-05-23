@@ -13,7 +13,8 @@ In this node/express template
    - RESTful api
    - JWT auth
    - bcrypt
-   - express-validator etc.
+   - express-validator 
+   - error handler etc.
 
 In order to use it,
 
@@ -52,6 +53,8 @@ DM
 
 #### Find more other Starter kits of mine ?   
 
+  [Apollo server + Prisma ORM + SDL modulerized - graphql api](https://github.com/Bonekyaw/apollo-graphql-prisma)  
+  [Express + Prisma ORM + graphql js SDL modulerized - graphql api](https://github.com/Bonekyaw/node-express-graphql-prisma)  
   [Express + Prisma ORM + mongodb - rest api](https://github.com/Bonekyaw/node-express-prisma-mongodb)  
   [Express + Prisma ORM + SQL - rest api](https://github.com/Bonekyaw/node-express-prisma-rest)  
   [Express + Apollo server + mongoose - graphql api](https://github.com/Bonekyaw/node-express-apollo-nosql)  
