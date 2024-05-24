@@ -44,6 +44,15 @@ DB_TIMEZONE=+06:30
 TOKEN_SECRET="should be something hard to read"
 
 ```
+Please note.   
+*TOKEN_SECRET* should be complex and hard to guest.  
+After git clone, it should be run.
+
+```
+npm install
+npm start
+
+```  
 
 If you have something hard to solve,
 DM  
