@@ -2,6 +2,12 @@ const express = require('express');
 
 const router = express.Router();
 const adminController = require('../../controllers/adminController');
+const upload = require('../../middlewares/uploadFile');
+
+// Upload single image
+router.put('/admins/:id/upload', upload.single('avatar'), adminController.uploadProfile );
+// Upload multiple images
+// router.put('/admins/:id/upload',upload.array('avatar'), adminController.uploadProfile );
 
 // GET localhost:8080/admins - get all admins
 router.get('/admins', adminController.index);

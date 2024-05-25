@@ -33,7 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         min: 0,
         max: 5,
       },
-    },    
+    },
+    profile: {
+      type: DataTypes.STRING,
+    }    
   });
 
   return Admin;
