@@ -47,6 +47,11 @@ TOKEN_SECRET="should be something hard to read"
 ```
 Please note.   
 *TOKEN_SECRET* should be complex and hard to guess.  
+
+If you use file uploading feature in this kit,  
+create nested folders `uploads/images` in the root directory.  
+But making directories is up to you. You can configure in `middlewares/uploadFile.js`.  
+
 After git clone, it should be run.
 
 ```
