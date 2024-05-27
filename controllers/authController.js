@@ -242,7 +242,7 @@ exports.confirmPassword = [
 
     // jwt token
     let payload = { id: newAdmin.id };
-    const jwtToken = jwt.sign(payload, process.env.TOKEN_SECRET);
+    const jwtToken = jwt.sign(payload, process.env.TOKEN_SECRET, {expiresIn: '1h'});
 
     res.status(201).json({
       message: "Successfully created an account.",
