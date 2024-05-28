@@ -17,4 +17,7 @@ router.post('/verify-otp', authController.verifyOTP);
 router.post('/confirm-password', authController.confirmPassword);
 router.post('/login', validatePhone, authController.login);
 
+// Refresh Token for expired jwt token. 
+router.post('/refresh-token', authController.refreshToken);
+
 module.exports = router;

@@ -36,7 +36,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     profile: {
       type: DataTypes.STRING,
-    }    
+    },
+    randToken: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },  
   });
 
   return Admin;

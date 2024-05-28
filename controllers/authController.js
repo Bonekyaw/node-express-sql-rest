@@ -16,28 +16,29 @@ const {
   checkPhoneIfNotExist,
   checkOtpErrorIfSameDate,
   checkOtpPhone,
+  checkAdmin,
 } = require("./../utils/auth");
 
 exports.register = asyncHandler(async (req, res, next) => {
   const phone = req.body.phone;
   const admin = await Admin.findOne({
-    where: { phone: phone }   // { phone }
+    where: { phone: phone }, // { phone }
   });
   checkPhoneExist(admin);
 
   // OTP processing eg. Sending OTP request to Operator
-  const otpCheck = await Otp.findOne({   
-    where: { phone: phone }  // { phone }
+  const otpCheck = await Otp.findOne({
+    where: { phone: phone }, // { phone }
   });
   const token = rand() + rand();
   if (!otpCheck) {
     const otp = {
-      phone: phone,   // phone
+      phone: phone, // phone
       otp: "123456", // fake OTP
       rememberToken: token,
       count: 1,
     };
-    await Otp.create(otp); 
+    await Otp.create(otp);
   } else {
     const lastRequest = new Date(otpCheck.updatedAt).toLocaleDateString();
     const isSameDate = lastRequest == new Date().toLocaleDateString();
@@ -101,12 +102,12 @@ exports.verifyOTP = [
     const { token, phone, otp } = req.body;
 
     const admin = await Admin.findOne({
-      where: { phone: phone }
+      where: { phone: phone },
     });
     checkPhoneExist(admin);
 
     const otpCheck = await Otp.findOne({
-      where: { phone: phone }
+      where: { phone: phone },
     });
     checkOtpPhone(otpCheck);
 
@@ -119,19 +120,16 @@ exports.verifyOTP = [
       otpCheck.error = 5;
       await otpCheck.save();
 
-      const err = new Error(
-        "Token is invalid."
-      );
+      const err = new Error("Token is invalid.");
       err.status = 400;
       return next(err);
     }
     const difference = moment() - moment(otpCheck.updatedAt);
     console.log("Diff", difference);
-    
-    if (difference > 90000) {     // expire at 1 min 30 sec
-      const err = new Error(
-        "OTP is expired."
-      );
+
+    if (difference > 90000) {
+      // expire at 1 min 30 sec
+      const err = new Error("OTP is expired.");
       err.status = 403;
       return next(err);
     }
@@ -146,9 +144,7 @@ exports.verifyOTP = [
         await otpCheck.save();
       }
       // ----- Ending -----------
-      const err = new Error(
-        "OTP is incorrect."
-      );
+      const err = new Error("OTP is incorrect.");
       err.status = 401;
       return next(err);
     }
@@ -159,11 +155,11 @@ exports.verifyOTP = [
     otpCheck.error = 1; // reset error count
     await otpCheck.save();
 
-  res.status(200).json({ 
-    message: "Successfully OTP is verified",
-    phone: phone,
-    token: randomToken,
-  });
+    res.status(200).json({
+      message: "Successfully OTP is verified",
+      phone: phone,
+      token: randomToken,
+    });
   }),
 ];
 
@@ -194,14 +190,13 @@ exports.confirmPassword = [
     }
     const { token, phone, password } = req.body;
 
-
     const admin = await Admin.findOne({
-      where: { phone: phone }
+      where: { phone: phone },
     });
     checkPhoneExist(admin);
 
     const otpCheck = await Otp.findOne({
-      where: { phone: phone }
+      where: { phone: phone },
     });
     checkOtpPhone(otpCheck);
 
@@ -234,20 +229,25 @@ exports.confirmPassword = [
 
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
+    const randomToken = rand() + rand() + rand();
 
     const newAdmin = await Admin.create({
       phone: req.body.phone,
       password: hashPassword,
+      randToken: randomToken,
     });
 
     // jwt token
     let payload = { id: newAdmin.id };
-    const jwtToken = jwt.sign(payload, process.env.TOKEN_SECRET, {expiresIn: '1h'});
+    const jwtToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.status(201).json({
       message: "Successfully created an account.",
       token: jwtToken,
       user_id: newAdmin.id,
+      randomToken: newAdmin.randToken,
     });
   }),
 ];
@@ -274,7 +274,7 @@ exports.login = [
     const { phone, password } = req.body;
 
     const admin = await Admin.findOne({
-      where: { phone }      // { phone: phone}
+      where: { phone }, // { phone: phone}
     });
     checkPhoneIfNotExist(admin);
 
@@ -311,18 +311,83 @@ exports.login = [
       return next(err);
     }
 
+    const randomToken = rand() + rand() + rand();
     if (admin.error >= 1) {
       admin.error = 0;
+      admin.randToken = randomToken;
       await admin.save();
     }
 
     let payload = { id: admin.id };
-    const jwtToken = jwt.sign(payload, process.env.TOKEN_SECRET, {expiresIn: '1h'});
+    const jwtToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.status(201).json({
       message: "Successfully Logged In.",
       token: jwtToken,
       user_id: admin.id,
+      randomToken: randomToken,
+    });
+  }),
+];
+
+exports.refreshToken = [
+  // Validate and sanitize fields.
+  body("randomToken", "randomToken must not be empty.")
+    .trim()
+    .notEmpty()
+    .escape(),
+  body("user_id", "User ID must not be empty.").trim().notEmpty().escape(),
+
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/error messages.
+      const err = new Error("Validation failed!");
+      err.status = 400;
+      return next(err);
+    }
+
+    const authHeader = req.get("Authorization");
+    if (!authHeader) {
+      const err = new Error("You are not an authenticated user!.");
+      err.status = 401;
+      throw err;
+    }
+    const { randomToken, user_id } = req.body;
+
+    const admin = await Admin.findByPk(user_id);
+    checkAdmin(admin);
+
+    if (admin.randToken !== randomToken) {
+      admin.error = 5;
+      await admin.save();
+
+      const err = new Error(
+        "This request may be an attack. Please contact the admin team."
+      );
+      err.status = 400;
+      return next(err);
+    }
+
+    const randToken = rand() + rand() + rand();
+
+    admin.randToken = randToken;
+    await admin.save();
+
+    // jwt token
+    let payload = { id: user_id };
+    const jwtToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.status(201).json({
+      message: "Successfully sent a new token.",
+      token: jwtToken,
+      user_id: user_id,
+      randomToken: randToken,
     });
   }),
 ];
