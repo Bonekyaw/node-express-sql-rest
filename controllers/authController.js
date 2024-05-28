@@ -316,6 +316,9 @@ exports.login = [
       admin.error = 0;
       admin.randToken = randomToken;
       await admin.save();
+    } else {
+      admin.randToken = randomToken;
+      await admin.save();
     }
 
     let payload = { id: admin.id };
