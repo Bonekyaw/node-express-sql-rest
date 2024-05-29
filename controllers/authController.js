@@ -341,7 +341,7 @@ exports.refreshToken = [
     .trim()
     .notEmpty()
     .escape(),
-  body("user_id", "User ID must not be empty.").trim().notEmpty().escape(),
+  body("user_id", "User ID must not be empty.").isInt(),
 
   asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request.
