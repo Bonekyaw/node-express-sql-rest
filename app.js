@@ -7,6 +7,7 @@ const cors = require('cors');
 
 const limiter = require("./middlewares/rateLimiter");
 const isAuth = require('./middlewares/isAuth');
+const authorise = require('./middlewares/authorise');
 const adminRoutes = require("./routes/v1/admin");
 const authRoutes = require("./routes/v1/auth");
 
@@ -26,7 +27,7 @@ app.use(cors());
 app.use(limiter);
 
 app.use("/api/v1", authRoutes);
-app.use("/api/v1", isAuth, adminRoutes);
+app.use("/api/v1", isAuth, authorise(false, "user"), adminRoutes);  // Hey Authorization
 
 const db = require("./models");
 

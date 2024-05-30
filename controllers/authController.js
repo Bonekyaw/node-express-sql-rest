@@ -357,7 +357,7 @@ exports.refreshToken = [
     if (!authHeader) {
       const err = new Error("You are not an authenticated user!.");
       err.status = 401;
-      throw err;
+      return next(err);
     }
     const { randomToken, user_id } = req.body;
 

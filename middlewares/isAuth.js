@@ -2,28 +2,31 @@ require("dotenv").config();
 
 const jwt = require("jsonwebtoken");
 
-const checkAuth = (param) => {
-  if (!param) {
-    const err = new Error("You are not an authenticated user!.");
-    err.status = 401;
-    throw err;
-  }
-};
-
 const isAuth = (req, res, next) => {
   const authHeader = req.get("Authorization");
-  checkAuth(authHeader);
+  
+  if (!authHeader) {
+    const err = new Error("You are not an authenticated user!.");
+    err.status = 401;
+    return next(err);
+  }
 
   const token = authHeader.split(" ")[1];
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
   } catch (error) {
-    error.status = 500;
-    throw error;
+    const err = new Error("You are not an authenticated user!.");
+    err.status = 401;
+    return next(err);
   }
 
-  checkAuth(decodedToken);
+  if (!decodedToken) {
+    const err = new Error("You are not an authenticated user!.");
+    err.status = 401;
+    return next(err);
+  }
+
   req.adminId = decodedToken.id;
   next();
 };
