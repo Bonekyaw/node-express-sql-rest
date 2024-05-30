@@ -1,6 +1,8 @@
 ### This is Simple Express Starter Kit
 
-##### Node express + Sequelize ORM ( MySQL / PostgreSQL ) + REST api 
+##### Node express + Sequelize ORM ( MySQL / PostgreSQL ) + REST api  
+
+( မြန်မာလို Documentation မကြာမီ တင်ပေးပါတော့မည်။ )  
 
 You can use it for your project. If it is useful for you,
 don't forget to give me a GitHub star, please.
@@ -15,7 +17,9 @@ In this node/express template
    - bcrypt
    - express-validator 
    - error handler 
-   - file uploading etc.
+   - file uploading 
+   - Authorization
+   - Pagination etc.
 
 In order to use it,
 

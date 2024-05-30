@@ -7,7 +7,7 @@ const db = require("../models");
 const Admin = db.admins;
 
 const authorise = require("./../utils/authorise");
-const { checkAdmin } = require("./../utils/auth");
+const paginate = require("./../utils/paginate");
 const { checkUploadFile } = require("./../utils/file");
 
 exports.uploadProfile = asyncHandler(async (req, res, next) => {
@@ -52,31 +52,19 @@ exports.index = [
     }
 
     const { page, limit } = req.query;
-    
+
     // Authorization - if it is "user" role, no one is allowed.
     // Same as - authorise(true, admin, "super", "manager", "editor")
-    // authorise(false, admin, "user"); 
+    // authorise(false, admin, "user");
 
-    const offset = (page - 1) * limit;
-
-    const { count, rows } = await Admin.findAndCountAll({
-      where: {
+    const filters = {
         status: "active",
-      },
-      attributes: { exclude: ["password", "error", "randToken", "updatedAt"] },
-      offset: offset,
-      limit: limit,
-    });
+    };
+    const order = [['createdAt', 'DESC']];
+    const columns = {exclude: ["password", "error", "randToken", "updatedAt"]};
 
-    res.status(200).json({
-      total: count,
-      data: rows,
-      currentPage: page,
-      previousPage: page == 1 ? null : page - 1,
-      nextPage: page * limit >= count ? null : page + 1,
-      lastPage: Math.ceil(count / limit),
-      countPerPage: limit,
-    });
+    const admins = await paginate(Admin, page, limit, filters, order, columns);
+    res.status(200).json(admins);
   }),
 ];
 
