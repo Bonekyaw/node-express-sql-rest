@@ -64,6 +64,7 @@ exports.index = [
     const columns = {exclude: ["password", "error", "randToken", "updatedAt"]};
 
     const admins = await paginate.withCount(Admin, page, limit, filters, order, columns);
+    // const admins = await paginate.noCount(Admin, page, limit, filters, order, columns, relation);
     res.status(200).json(admins);
   }),
 ];
