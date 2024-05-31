@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 
-const paginate = asyncHandler(async (
+exports.withCount = asyncHandler(async (
   model,
   page = 1,
   limit = 10,
@@ -29,4 +29,35 @@ const paginate = asyncHandler(async (
   };
 });
 
-module.exports = paginate;
+exports.noCount = asyncHandler(async (
+  model,
+  page = 1,
+  limit = 10,
+  filters = {},
+  order = [],
+  columns = {}
+) => {
+  const offset = (page - 1) * limit;
+
+  const rows = await model.findAll({
+    where: filters,
+    order,
+    attributes: columns ,
+    offset: offset,
+    limit: limit + 1,
+  });
+
+  let hasNextPage = false;
+  if (rows.length > limit) { // if got an extra result
+   hasNextPage = true; // has a next page of results
+   rows.pop(); // remove extra result
+  }
+
+  return {
+    data: rows,
+    currentPage: page,
+    previousPage: page == 1 ? null : page - 1,
+    nextPage: hasNextPage ? page + 1 : null,
+    countPerPage: limit,
+  };
+});

@@ -63,7 +63,7 @@ exports.index = [
     const order = [['createdAt', 'DESC']];
     const columns = {exclude: ["password", "error", "randToken", "updatedAt"]};
 
-    const admins = await paginate(Admin, page, limit, filters, order, columns);
+    const admins = await paginate.withCount(Admin, page, limit, filters, order, columns);
     res.status(200).json(admins);
   }),
 ];
