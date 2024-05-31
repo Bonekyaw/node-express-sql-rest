@@ -12,20 +12,23 @@ exports.withCount = asyncHandler(
   ) => {
     const offset = (page - 1) * limit;
 
-    const { count, rows } = relation ? await model.findAndCountAll({
-      where: filters,
-      include: [relation],
-      order,
-      attributes: columns,
-      offset: offset,
-      limit: limit,
-    }) : await model.findAndCountAll({
-      where: filters,
-      order,
-      attributes: columns,
-      offset: offset,
-      limit: limit,
-    });
+    const Options = relation
+      ? {
+          where: filters,
+          include: [relation],
+          order,
+          attributes: columns,
+          offset: offset,
+          limit: limit,
+        }
+      : {
+          where: filters,
+          order,
+          attributes: columns,
+          offset: offset,
+          limit: limit,
+        };
+    const { count, rows } = await model.findAndCountAll(Options);
 
     return {
       total: count,
@@ -51,20 +54,23 @@ exports.noCount = asyncHandler(
   ) => {
     const offset = (page - 1) * limit;
 
-    const rows = relation ? await model.findAll({
-      where: filters,
-      include: [relation],
-      order,
-      attributes: columns,
-      offset: offset,
-      limit: limit + 1,
-    }) : await model.findAll({
-      where: filters,
-      order,
-      attributes: columns,
-      offset: offset,
-      limit: limit + 1,
-    });
+    const Options = relation
+      ? {
+          where: filters,
+          include: [relation],
+          order,
+          attributes: columns,
+          offset: offset,
+          limit: limit + 1,
+        }
+      : {
+          where: filters,
+          order,
+          attributes: columns,
+          offset: offset,
+          limit: limit + 1,
+        };
+    const rows = await model.findAll(Options);
 
     let hasNextPage = false;
     if (rows.length > limit) {
