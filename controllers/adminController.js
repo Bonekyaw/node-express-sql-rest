@@ -63,8 +63,8 @@ exports.index = [
     const order = [['createdAt', 'DESC']];
     const fields = {exclude: ["password", "error", "randToken", "updatedAt"]};
 
-    const admins = await withCount(Admin, page, limit, filters, order, fields);
-    // const admins = await noCount(Admin, page, limit, filters, order, fields, relation);
+    // const admins = await withCount(Admin, page, limit, filters, order, fields);
+    const admins = await noCount(Admin, page, limit, filters, order, fields);
     res.status(200).json(admins);
   }),
 ];

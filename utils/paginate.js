@@ -12,23 +12,23 @@ exports.withCount = asyncHandler(
   ) => {
     const offset = (page - 1) * limit;
 
-    const Options = relation
-      ? {
-          where: filters,
-          include: [relation],
-          order,
-          attributes: fields,
-          offset: offset,
-          limit: limit,
-        }
-      : {
-          where: filters,
-          order,
-          attributes: fields,
-          offset: offset,
-          limit: limit,
-        };
-    const { count, rows } = await model.findAndCountAll(Options);
+    const options = {};
+    if (filters) {
+      options.where = filters;
+    }
+    if (relation) {
+      options.include = relation;
+    }
+    if (order) {
+      options.order = order;
+    }
+    if (fields) {
+      options.attributes = fields;
+    }
+    options.offset = offset;
+    options.limit = limit;
+
+    const { count, rows } = await model.findAndCountAll(options);
 
     return {
       total: count,
@@ -47,30 +47,29 @@ exports.noCount = asyncHandler(
     model,
     page = 1,
     limit = 10,
-    filters = {},
-    order = [],
-    fields = {},
-    relation
+    filters = null,
+    order = null,
+    fields = null,
+    relation = null
   ) => {
     const offset = (page - 1) * limit;
 
-    const Options = relation
-      ? {
-          where: filters,
-          include: [relation],
-          order,
-          attributes: fields,
-          offset: offset,
-          limit: limit + 1,
-        }
-      : {
-          where: filters,
-          order,
-          attributes: fields,
-          offset: offset,
-          limit: limit + 1,
-        };
-    const rows = await model.findAll(Options);
+    const options = {};
+    if (filters) {
+      options.where = filters;
+    }
+    if (relation) {
+      options.include = relation;
+    }
+    if (order) {
+      options.order = order;
+    }
+    if (fields) {
+      options.attributes = fields;
+    }
+    options.offset = offset;
+    options.limit = limit + 1;
+    const rows = await model.findAll(options);
 
     let hasNextPage = false;
     if (rows.length > limit) {
