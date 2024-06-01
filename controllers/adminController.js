@@ -7,7 +7,7 @@ const db = require("../models");
 const Admin = db.admins;
 
 const authorise = require("./../utils/authorise");
-const paginate = require("./../utils/paginate");
+const { withCount, noCount } = require("./../utils/paginate");
 const { checkUploadFile } = require("./../utils/file");
 
 exports.uploadProfile = asyncHandler(async (req, res, next) => {
@@ -61,10 +61,10 @@ exports.index = [
         status: "active",
     };
     const order = [['createdAt', 'DESC']];
-    const columns = {exclude: ["password", "error", "randToken", "updatedAt"]};
+    const fields = {exclude: ["password", "error", "randToken", "updatedAt"]};
 
-    const admins = await paginate.withCount(Admin, page, limit, filters, order, columns);
-    // const admins = await paginate.noCount(Admin, page, limit, filters, order, columns, relation);
+    const admins = await withCount(Admin, page, limit, filters, order, fields);
+    // const admins = await noCount(Admin, page, limit, filters, order, fields, relation);
     res.status(200).json(admins);
   }),
 ];

@@ -7,7 +7,7 @@ exports.withCount = asyncHandler(
     limit = 10,
     filters = {},
     order = [],
-    columns = {},
+    fields = {},
     relation
   ) => {
     const offset = (page - 1) * limit;
@@ -17,14 +17,14 @@ exports.withCount = asyncHandler(
           where: filters,
           include: [relation],
           order,
-          attributes: columns,
+          attributes: fields,
           offset: offset,
           limit: limit,
         }
       : {
           where: filters,
           order,
-          attributes: columns,
+          attributes: fields,
           offset: offset,
           limit: limit,
         };
@@ -49,7 +49,7 @@ exports.noCount = asyncHandler(
     limit = 10,
     filters = {},
     order = [],
-    columns = {},
+    fields = {},
     relation
   ) => {
     const offset = (page - 1) * limit;
@@ -59,14 +59,14 @@ exports.noCount = asyncHandler(
           where: filters,
           include: [relation],
           order,
-          attributes: columns,
+          attributes: fields,
           offset: offset,
           limit: limit + 1,
         }
       : {
           where: filters,
           order,
-          attributes: columns,
+          attributes: fields,
           offset: offset,
           limit: limit + 1,
         };
