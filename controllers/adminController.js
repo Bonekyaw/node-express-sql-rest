@@ -7,7 +7,7 @@ const db = require("../models");
 const Admin = db.admins;
 
 const authorise = require("./../utils/authorise");
-const { withCount, noCount } = require("./../utils/paginate");
+const { withCount, noCount, cursor } = require("./../utils/paginate");
 const { checkUploadFile } = require("./../utils/file");
 
 exports.uploadProfile = asyncHandler(async (req, res, next) => {
@@ -52,6 +52,8 @@ exports.index = [
     }
 
     const { page, limit } = req.query;
+    // const cursors = req.query.cursor ?? null;
+    // const limit = req.query.limit;
 
     // Authorization - if it is "user" role, no one is allowed.
     // Same as - authorise(true, admin, "super", "manager", "editor")
@@ -61,10 +63,12 @@ exports.index = [
         status: "active",
     };
     const order = [['createdAt', 'DESC']];
+    // const order = [["id", "DESC"]];     // For cursor
     const fields = {exclude: ["password", "error", "randToken", "updatedAt"]};
 
-    // const admins = await withCount(Admin, page, limit, filters, order, fields);
-    const admins = await noCount(Admin, page, limit, filters, order, fields);
+    const admins = await withCount(Admin, page, limit, filters, order, fields);
+    // const admins = await noCount(Admin, page, limit, filters, order, fields);
+    // const admins = await cursor(Admin, cursors, limit, filters, order, fields);
     res.status(200).json(admins);
   }),
 ];
