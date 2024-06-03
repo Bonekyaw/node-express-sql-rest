@@ -8,7 +8,7 @@ const authorise = require('../../middlewares/authorise');
 // Upload single image
 router.put('/admins/upload', upload.single('avatar'), adminController.uploadProfile );
 // Upload multiple images
-// router.put('/admins/:id/upload',upload.array('avatar'), adminController.uploadProfile );
+// router.put('/admins/upload',upload.array('avatar'), adminController.uploadProfile );
 
 // GET localhost:8080/api/v1/admins?page=1&limit=5 
 // Get all admins by Pagination

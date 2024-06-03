@@ -62,8 +62,8 @@ exports.index = [
     const filters = {
         status: "active",
     };
-    const order = [['createdAt', 'DESC']];
-    // const order = [["id", "DESC"]];     // For cursor
+    // const order = [['createdAt', 'DESC']];
+    const order = [["id", "DESC"]];     // For cursor
     const fields = {exclude: ["password", "error", "randToken", "updatedAt"]};
 
     const admins = await withCount(Admin, page, limit, filters, order, fields);

@@ -90,6 +90,10 @@ exports.noCount = asyncHandler(
   }
 );
 
+// Note, please.
+// THis cursor-based pagination works well with MySQL DB.
+// But it does not work well with PostgreSQL DB because of filtering not working.
+
 exports.cursor = asyncHandler(
   async (
     model,
